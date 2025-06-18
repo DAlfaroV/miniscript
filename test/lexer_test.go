@@ -9,7 +9,7 @@ import (
 )
 
 func TestLexerOnExampleFiles(t *testing.T) {
-	exampleDir := "../examples"
+	exampleDir := "examples/"
 
 	pattern := filepath.Join(exampleDir, "*.ms")
 	files, err := filepath.Glob(pattern)

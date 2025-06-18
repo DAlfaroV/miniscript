@@ -1,14 +1,11 @@
 package lexer
 
-// TokenType representa los distintos tipos de tokens en MiniScript.
 type TokenType int
 
 const (
-	// Tokens especiales
 	TOKEN_ILLEGAL TokenType = iota
 	TOKEN_EOF
 
-	// Identificadores y literales
 	TOKEN_IDENTIFIER // nombre de variable o función
 	TOKEN_NUMBER     // literal numérico
 	TOKEN_STRING     // literal de cadena
@@ -16,7 +13,6 @@ const (
 	TOKEN_FALSE      // literal booleano false
 	TOKEN_NIL        // literal nil
 
-	// Palabras clave
 	TOKEN_IF
 	TOKEN_ELSE
 	TOKEN_ELSEIF
@@ -30,7 +26,6 @@ const (
 	TOKEN_PRINT
 	TOKEN_RANGE
 
-	// Operadores aritméticos y de comparación
 	TOKEN_PLUS     // +
 	TOKEN_MINUS    // -
 	TOKEN_ASTERISK // *
@@ -45,7 +40,6 @@ const (
 	TOKEN_LTE      // <=
 	TOKEN_ASSIGN   // =
 
-	// Delimitadores y puntuación
 	TOKEN_LPAREN    // (
 	TOKEN_RPAREN    // )
 	TOKEN_LBRACKET  // [
@@ -57,13 +51,11 @@ const (
 	TOKEN_DOT       // .
 	TOKEN_SEMICOLON // ;
 
-	// Operadores lógicos basados en palabras
 	TOKEN_AND
 	TOKEN_OR
 	TOKEN_NOT
 )
 
-// Token es la estructura que representa un token individual.
 type Token struct {
 	Type    TokenType   // El tipo de token (uno de los valores de TokenType)
 	Lexeme  string      // El texto exacto extraído de la fuente
@@ -72,7 +64,6 @@ type Token struct {
 	Column  int         // Número de columna aproximada donde empieza el token
 }
 
-// keywords mapea cadenas literales a su tipo de token correspondiente.
 var keywords = map[string]TokenType{
 	"if":       TOKEN_IF,
 	"else":     TOKEN_ELSE,
