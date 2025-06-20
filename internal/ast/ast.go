@@ -19,12 +19,18 @@ type Assignment struct {
 }
 
 type Expr struct {
-	Left  *Term  `@@`
-	Op    string `[ @("+" | "-" | "*" | "/" | "==" | "!=" | ">" | "<" | ">=" | "<=") `
-	Right *Term  `  @@ ]`
+	Left *Term     `@@`
+	Rest []*OpTerm `@@*`
+}
+
+type OpTerm struct {
+	Op   string `@("+" | "-" | "*" | "/" | "==" | "!=" | ">" | "<" | ">=" | "<=")`
+	Term *Term  `@@`
 }
 
 type Term struct {
-	Number *float64 `  @Float`
-	Ident  *string  `| @Ident`
+	Int   *int     `  @Int`
+	Float *float64 `| @Float`
+	Ident *string  `| @Ident`
+	Expr  *Expr    `| "(" @@ ")"`
 }
