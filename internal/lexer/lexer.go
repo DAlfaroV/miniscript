@@ -9,7 +9,7 @@ import (
 var (
 	miniLexer = lexer.MustSimple([]lexer.SimpleRule{
 		{Name: "Comment", Pattern: `//[^\n]*`},
-		{Name: "Keyword", Pattern: `\b(if|while|print|end|true|false|nil)\b`},
+		// {Name: "Keyword", Pattern: `\b(if|while|print|end|true|false|nil)\b`},
 		{Name: "Ident", Pattern: `[a-zA-Z_]\w*`},
 		{Name: "Float", Pattern: `\d+\.\d+`}, // Primero Float
 		{Name: "Int", Pattern: `\d+`},        // Luego Int
