@@ -25,12 +25,11 @@ func (e *Env) Run(program *ast.Program) error {
 	return nil
 }
 
-// execStatement ejecuta una única sentencia del programa.
-// Actualmente soporta sentencias de impresión y asignación.
+// execStatement ejecuta una sola sentencia del AST
 func (e *Env) execStatement(stmt *ast.Statement) error {
 	switch {
 	case stmt.Print != nil:
-		// Si es una sentencia de impresión, evalúa la expresión y la muestra.
+		// print expr
 		value, err := e.evalExpr(stmt.Print.Expr)
 		if err != nil {
 			return err
@@ -38,17 +37,58 @@ func (e *Env) execStatement(stmt *ast.Statement) error {
 		fmt.Println(value)
 
 	case stmt.Assignment != nil:
-		// Si es una asignación, evalúa la expresión y guarda el resultado con el nombre de la variable.
+		// x = expr
 		value, err := e.evalExpr(stmt.Assignment.Value)
 		if err != nil {
 			return err
 		}
 		e.Variables[stmt.Assignment.Name] = value
 
+	case stmt.If != nil:
+		// if condición ... end
+		cond, err := e.evalExpr(stmt.If.Condition)
+		if err != nil {
+			return err
+		}
+		// Verifica que sea bool
+		condBool, ok := cond.(bool)
+		if !ok {
+			return errors.New("la condición del 'if' no es booleana")
+		}
+		if condBool {
+			// Ejecuta el bloque del if
+			for _, s := range stmt.If.Body {
+				if err := e.execStatement(s); err != nil {
+					return err
+				}
+			}
+		}
+
+	case stmt.While != nil:
+		// while condición ... end
+		for {
+			cond, err := e.evalExpr(stmt.While.Condition)
+			if err != nil {
+				return err
+			}
+			condBool, ok := cond.(bool)
+			if !ok {
+				return errors.New("la condición del 'while' no es booleana")
+			}
+			if !condBool {
+				break
+			}
+			for _, s := range stmt.While.Body {
+				if err := e.execStatement(s); err != nil {
+					return err
+				}
+			}
+		}
+
 	default:
-		// Si no es ninguna de las anteriores, es una sentencia no reconocida.
 		return errors.New("sentencia desconocida")
 	}
+
 	return nil
 }
 
@@ -129,54 +169,95 @@ func (e *Env) evalTerm(term *ast.Term) (interface{}, error) {
 // applyOperator aplica una operación binaria básica entre dos operandos.
 // Soporta suma, resta, multiplicación y división para enteros y floats.
 // También permite concatenación con "+" para strings.
+// applyOperator aplica una operación binaria entre dos operandos.
 func applyOperator(left interface{}, op string, right interface{}) (interface{}, error) {
 	switch l := left.(type) {
-
 	case int:
-		r, ok := right.(int)
-		if !ok {
-			return nil, errors.New("tipos incompatibles: se esperaba int")
-		}
-		switch op {
-		case "+":
-			return l + r, nil
-		case "-":
-			return l - r, nil
-		case "*":
-			return l * r, nil
-		case "/":
-			return l / r, nil
+		switch r := right.(type) {
+		case int:
+			switch op {
+			case "+":
+				return l + r, nil
+			case "-":
+				return l - r, nil
+			case "*":
+				return l * r, nil
+			case "/":
+				return l / r, nil
+			case "==":
+				return l == r, nil
+			case "!=":
+				return l != r, nil
+			case "<":
+				return l < r, nil
+			case "<=":
+				return l <= r, nil
+			case ">":
+				return l > r, nil
+			case ">=":
+				return l >= r, nil
+			default:
+				return nil, fmt.Errorf("operador no soportado para enteros: %s", op)
+			}
 		default:
-			return nil, fmt.Errorf("operador no soportado para enteros: %s", op)
+			return nil, errors.New("tipos incompatibles con enteros")
 		}
 
 	case float64:
-		r, ok := right.(float64)
-		if !ok {
-			return nil, errors.New("tipos incompatibles: se esperaba float")
-		}
-		switch op {
-		case "+":
-			return l + r, nil
-		case "-":
-			return l - r, nil
-		case "*":
-			return l * r, nil
-		case "/":
-			return l / r, nil
+		switch r := right.(type) {
+		case float64:
+			switch op {
+			case "+":
+				return l + r, nil
+			case "-":
+				return l - r, nil
+			case "*":
+				return l * r, nil
+			case "/":
+				return l / r, nil
+			case "==":
+				return l == r, nil
+			case "!=":
+				return l != r, nil
+			case "<":
+				return l < r, nil
+			case "<=":
+				return l <= r, nil
+			case ">":
+				return l > r, nil
+			case ">=":
+				return l >= r, nil
+			default:
+				return nil, fmt.Errorf("operador no soportado para floats: %s", op)
+			}
 		default:
-			return nil, fmt.Errorf("operador no soportado para floats: %s", op)
+			return nil, errors.New("tipos incompatibles con floats")
 		}
 
 	case string:
 		r, ok := right.(string)
 		if op == "+" && ok {
-			// Concatenación de cadenas con "+"
 			return l + r, nil
+		} else if (op == "==" || op == "!=") && ok {
+			return (l == r), nil
 		}
-		return nil, errors.New("solo se permite '+' entre strings")
+		return nil, fmt.Errorf("operador no soportado para strings: %s", op)
+
+	case bool:
+		r, ok := right.(bool)
+		if !ok {
+			return nil, errors.New("tipos incompatibles con booleanos")
+		}
+		switch op {
+		case "==":
+			return l == r, nil
+		case "!=":
+			return l != r, nil
+		default:
+			return nil, fmt.Errorf("operador no soportado para booleanos: %s", op)
+		}
 
 	default:
-		return nil, errors.New("tipo de dato no soportado en operación")
+		return nil, errors.New("operador no soportado para ese tipo")
 	}
 }

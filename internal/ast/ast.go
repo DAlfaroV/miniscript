@@ -9,8 +9,10 @@ type Program struct {
 // Statement representa una sentencia individual del lenguaje.
 // Puede ser una instrucción de impresión (print) o una asignación de variable.
 type Statement struct {
-	Print      *PrintStmt  `  @@` // Sentencia de impresión: print <expr>
-	Assignment *Assignment `| @@` // Sentencia de asignación: <ident> = <expr>
+	Print      *PrintStmt   `  @@`
+	Assignment *Assignment  `| @@`
+	If         *IfStatement `| @@`
+	While      *WhileLoop   `| @@`
 }
 
 // PrintStmt representa una sentencia de impresión.
@@ -24,6 +26,17 @@ type PrintStmt struct {
 type Assignment struct {
 	Name  string `@Ident "="` // Nombre de variable
 	Value *Expr  `@@`         // Valor asignado a través de una expresión
+}
+
+// if condición { ... }
+type IfStatement struct {
+	Condition *Expr        `"if" @@ "{"`
+	Body      []*Statement `@@* "}"`
+}
+
+type WhileLoop struct {
+	Condition *Expr        `"while" @@`
+	Body      []*Statement `"{" @@* "}"`
 }
 
 // Expr representa una expresión compuesta por un término inicial (Left)
@@ -43,9 +56,9 @@ type OpTerm struct {
 // Term representa los elementos más básicos de una expresión.
 // Puede ser un entero, un número flotante, un string, un identificador (variable), o una subexpresión entre paréntesis.
 type Term struct {
-	Int    *int     `  @Int`       // Literal entero, ej: 42
-	Float  *float64 `| @Float`     // Literal flotante, ej: 3.14
-	String *string  `| @String`    // Literal de cadena, ej: "hola"
-	Ident  *string  `| @Ident`     // Identificador, ej: variable
-	Expr   *Expr    `| "(" @@ ")"` // Subexpresión entre paréntesis, ej: (a + b)
+	Int    *int     `  @Int`
+	Float  *float64 `| @Float`
+	String *string  `| @String`
+	Ident  *string  `| @Ident`
+	Expr   *Expr    `| "(" @@ ")"`
 }

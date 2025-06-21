@@ -9,10 +9,10 @@ import (
 var (
 	miniLexer = lexer.MustSimple([]lexer.SimpleRule{
 		{Name: "Comment", Pattern: `//[^\n]*`},
-		{Name: "Keyword", Pattern: `\b(if|while|print|true|false|nil)\b`},
+		{Name: "Keyword", Pattern: `\b(if|while|print|end|true|false|nil)\b`},
 		{Name: "Ident", Pattern: `[a-zA-Z_]\w*`},
-		{Name: "Float", Pattern: `\d+\.\d+`},
-		{Name: "Int", Pattern: `\d+`},
+		{Name: "Float", Pattern: `\d+\.\d+`}, // Primero Float
+		{Name: "Int", Pattern: `\d+`},        // Luego Int
 		{Name: "String", Pattern: `"([^"\\]|\\.)*"`},
 		{Name: "Operator", Pattern: `==|!=|<=|>=|[+\-*/=<>]`},
 		{Name: "Punct", Pattern: `[{}\(\)]`},
@@ -20,7 +20,6 @@ var (
 	})
 )
 
-// Parser es el parser principal de MiniScript.
 var Parser = participle.MustBuild[ast.Program](
 	participle.Lexer(miniLexer),
 	participle.Elide("Whitespace", "Comment"),
