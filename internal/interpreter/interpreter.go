@@ -81,35 +81,47 @@ func (e *Env) evalExpr(expr *ast.Expr) (interface{}, error) {
 }
 
 // evalTerm evalúa un término individual que puede ser:
-// un número entero, flotante, cadena, identificador (variable), o una subexpresión.
+// un número entero, flotante, cadena, identificador (variable), literal especial o una subexpresión.
 func (e *Env) evalTerm(term *ast.Term) (interface{}, error) {
 	switch {
 	case term.Int != nil:
-		// Literal entero
+		// Literal entero (por ejemplo: 42)
 		return *term.Int, nil
 
 	case term.Float != nil:
-		// Literal flotante
+		// Literal flotante (por ejemplo: 3.14)
 		return *term.Float, nil
 
 	case term.String != nil:
-		// Literal de cadena
+		// Literal de cadena (por ejemplo: "Hola")
 		return *term.String, nil
 
 	case term.Ident != nil:
-		// Variable: busca su valor en el entorno
-		val, ok := e.Variables[*term.Ident]
+		ident := *term.Ident
+
+		// Verifica si el identificador es un literal booleano o nil
+		switch ident {
+		case "true":
+			return true, nil
+		case "false":
+			return false, nil
+		case "nil":
+			return nil, nil
+		}
+
+		// Si no es un literal especial, se busca como variable en el entorno
+		val, ok := e.Variables[ident]
 		if !ok {
-			return nil, fmt.Errorf("variable no definida: %s", *term.Ident)
+			return nil, fmt.Errorf("variable no definida: %s", ident)
 		}
 		return val, nil
 
 	case term.Expr != nil:
-		// Subexpresión entre paréntesis
+		// Subexpresión entre paréntesis (por ejemplo: (3 + 4))
 		return e.evalExpr(term.Expr)
 
 	default:
-		// Término inválido o nulo
+		// El término no contiene nada reconocible
 		return nil, errors.New("término inválido")
 	}
 }
