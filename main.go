@@ -24,22 +24,30 @@ func main() {
 		os.Exit(1)
 	}
 
-	program, err := parser.Parser.ParseString(filename, string(data)) // Esta por el print de punteros original.
-	println("\n ============== AST ============ \n")
-	// Usnado json para mostrar arbol en vez de punteros hexa
-	output, err := json.MarshalIndent(program, "", "  ")
+	// Parsear el programa
+	program, err := parser.Parser.ParseString(filename, string(data))
+	if err != nil {
+		fmt.Printf("Error al parsear: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Mostrar AST con delimitadores
+	fmt.Println("__BEGIN_AST__")
+	astJSON, err := json.MarshalIndent(program, "", "  ")
 	if err != nil {
 		fmt.Println("Error al serializar AST:", err)
 		os.Exit(1)
 	}
-	fmt.Println(string(output))
+	fmt.Println(string(astJSON))
+	fmt.Println("__END_AST__")
 
-	println("\n\n\n ============== OUTPUT de interprete ============ \n")
+	// Ejecutar el interprete con delimitadores
+	fmt.Println("__BEGIN_OUTPUT__")
 	env := interpreter.Env{Variables: make(map[string]interface{})}
 	err = env.Run(program)
 	if err != nil {
 		fmt.Println("Error al ejecutar:", err)
 		os.Exit(1)
 	}
-
+	fmt.Println("__END_OUTPUT__")
 }
