@@ -18,6 +18,76 @@
       <button type="submit">Ejecutar</button>
     </form>
 
+    <button id="help-button">Ver Manual de Sintaxis</button>
+
+    <!-- Modal -->
+    <div id="help-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>📄 Manual del lenguaje</h2>
+        <p>Se implementó este conjunto de funciones en el lenguaje:</p>
+
+        <h3>✅ Comentarios</h3>
+        <p>Se escriben con <code>//</code> hasta el fin de línea.</p>
+        <pre><code>// esto es un comentario</code></pre>
+
+        <h3>✅ Sentencias soportadas</h3>
+        <ul>
+        <li><strong>print</strong>: imprime expresiones</li>
+        <li><strong>asignación</strong>: <code>x = 42</code></li>
+        <li><strong>if</strong>: sin else, usando llaves</li>
+        <li><strong>while</strong>: con llaves</li>
+        </ul>
+        <pre><code>if x > 5 {
+    print "mayor a 5"
+    }</code></pre>
+        <pre><code>while x < 10 {
+    print x
+    x = x + 1
+    }</code></pre>
+
+        <h3>✅ Expresiones</h3>
+        <p>Admite enteros, flotantes, cadenas, variables y operadores aritméticos (+, -, *, /) y de comparación (==, !=, &gt;, &lt;, &gt;=, &lt;=).</p>
+        <pre><code>2 + 3 * 4
+    nombre + " " + apellido</code></pre>
+
+        <h3>✅ Literales especiales</h3>
+        <ul>
+        <li><code>true</code>, <code>false</code>: booleanos</li>
+        <li><code>nil</code>: valor nulo</li>
+        </ul>
+
+        <h3>✅ Reglas de bloque</h3>
+        <ul>
+        <li>Siempre usar <code>{ }</code> en <code>if</code> y <code>while</code></li>
+        <li>No hay <code>else</code></li>
+        <li>Sin funciones definidas todavía</li>
+        </ul>
+
+        <h3>🚧 Limitaciones</h3>
+        <ul>
+        <li>Sin <code>for</code></li>
+        <li>Variables solo globales</li>
+        <li>Sin listas ni arrays</li>
+        <li>Identificadores distinguen mayúsculas/minúsculas</li>
+        </ul>
+
+        <h3>📌 Ejemplo completo</h3>
+        <pre><code>x = 0
+    max = 5
+
+    while x < max {
+    print "Iteración: " + x
+    x = x + 1
+    }
+
+    if x == max {
+    print "Terminado"
+    }</code></pre>
+    </div>
+    </div>
+
+
     <div class="results">
       <div>
         <h2>AST</h2>
@@ -32,5 +102,28 @@
   <footer>
     &copy; 2025 Sady Guzman - Diego Alfaro
   </footer>
+
+    <script>
+    const modal = document.getElementById("help-modal");
+    const btn = document.getElementById("help-button");
+    const span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+    window.onclick = function(event) {
+        if (event.target == modal) {
+        modal.style.display = "none";
+        }
+    }
+    </script>
+
+
 </body>
+
+
+
 </html>
