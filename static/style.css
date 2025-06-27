@@ -1,0 +1,111 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5; /* un gris muy suave para dar contraste */
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #4b6cb7;
+  background-image: linear-gradient(to right, #182848, #4b6cb7);
+  color: #fff;
+  padding: 1.5em;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+header p {
+  margin: 0.5em 0 0;
+  font-size: 1rem;
+}
+
+main {
+  max-width: 1000px;
+  margin: 2em auto;
+  padding: 2em;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+form {
+  margin-bottom: 2em;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+
+textarea {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 1em;
+  padding: 0.75em;
+  font-family: monospace;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fafafa;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+button {
+  background-color: #4b6cb7;
+  color: #fff;
+  border: none;
+  padding: 0.6em 1.2em;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #182848;
+}
+
+.results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+
+.results > div {
+  flex: 1;
+  min-width: 300px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 1em;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.results h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  border-bottom: 2px solid #4b6cb7;
+  padding-bottom: 0.5em;
+}
+
+pre {
+  background-color: #f4f4f4;
+  padding: 1em;
+  border-radius: 4px;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+}
+
+footer {
+  text-align: center;
+  color: #777;
+  margin-top: 2em;
+  padding: 1em;
+  font-size: 0.9em;
+}
