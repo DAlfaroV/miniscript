@@ -4,20 +4,42 @@
   <meta charset="utf-8">
   <title>MiniScript Web</title>
   <style>
-    textarea { width: 100%; height: 200px; margin-bottom: 1em; }
-    pre { background: #f4f4f4; padding: 1em; }
+    textarea {
+      width: 100%;
+      height: 200px;
+      margin-bottom: 1em;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 1em;
+      overflow-x: auto;
+    }
+    .results {
+      display: flex;
+      gap: 1em;
+    }
+    .results > div {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
   <h1>MiniScript Web</h1>
   <form method="post">
-    <h3>Escribe código MiniScript</h3>
+    <h3>Código MiniScript</h3>
     <textarea name="code">{{ code }}</textarea>
     <button type="submit">Ejecutar</button>
   </form>
-  <h3>AST:</h3>
-  <pre>{{ ast }}</pre>
-  <h3>Output del interprete:</h3>
-  <pre>{{ output }}</pre>
+
+  <div class="results">
+    <div>
+      <h3>AST:</h3>
+      <pre>{{ ast }}</pre>
+    </div>
+    <div>
+      <h3>Resultado del interprete:</h3>
+      <pre>{{ output }}</pre>
+    </div>
+  </div>
 </body>
 </html>
