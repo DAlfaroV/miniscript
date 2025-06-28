@@ -115,23 +115,16 @@ func emitAssignment(a *ast.Assignment, b *strings.Builder) {
 
 // emitExpr devuelve el string en C que representa la expresión
 func emitExpr(e *ast.Expr) string {
-	// solo soportaremos Left y Rest simples
 	base := emitTerm(e.Left)
 	for _, opTerm := range e.Rest {
 		right := emitTerm(opTerm.Term)
-		// solo operaciones de enteros por ahora
-		// podemos expandirlo con una mini-runtime más adelante
-		switch opTerm.Op {
-		case "+", "-", "*", "/":
+
+		// concatenación de strings
+		if opTerm.Op == "+" {
+			base = fmt.Sprintf("value_concat(%s, %s)", base, right)
+		} else {
+			// operaciones aritméticas para ints
 			base = fmt.Sprintf("({ Value tmp; tmp.type=VAL_INT; tmp.i=%s.i %s %s.i; tmp; })", base, opTerm.Op, right)
-		case "==":
-			base = fmt.Sprintf("({ Value tmp; tmp.type=VAL_BOOL; tmp.b=(%s.i == %s.i); tmp; })", base, right)
-		case "!=":
-			base = fmt.Sprintf("({ Value tmp; tmp.type=VAL_BOOL; tmp.b=(%s.i != %s.i); tmp; })", base, right)
-		case ">", "<", ">=", "<=":
-			base = fmt.Sprintf("({ Value tmp; tmp.type=VAL_BOOL; tmp.b=(%s.i %s %s.i); tmp; })", base, opTerm.Op, right)
-		default:
-			base = "({ Value tmp; tmp.type=VAL_INT; tmp.i=0; tmp; }) /* op no soportado */"
 		}
 	}
 	return base

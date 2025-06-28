@@ -5,7 +5,8 @@ name = "MiniScript Tester"
 greeting = "Hi, " + name
 
 // Intento de literal de cadena con comillas escapadas.
-quote = "She said: \"Keep coding!\""
+// quote = "She said: \"Keep coding!\""
+// para que tanta feature o no
 
 
 // mostrando los valores asignados
@@ -16,6 +17,3 @@ print name
 
 print "valor greeting:"
 print greeting
-
-print "valor quote:"
-print quote

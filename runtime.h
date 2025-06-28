@@ -21,4 +21,7 @@ typedef struct {
 
 void value_print(Value v);
 
+Value value_concat(Value a, Value b);
+
+
 #endif

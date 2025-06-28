@@ -79,17 +79,32 @@ func (c *Compiler) compileAssignment(a *ast.Assignment) error {
 	return nil
 }
 
-// compileExpr transforma una expresión simple a string en C
-// (de momento solo soporta un solo término)
+// compileExpr transforma una expresión completa a string en C
 func (c *Compiler) compileExpr(e *ast.Expr) (string, error) {
 	left, err := c.compileTerm(e.Left)
 	if err != nil {
 		return "", err
 	}
 
-	// En esta versión simplificada ignoramos e.Rest
-	// Se podría mejorar para soportar operadores binarios
-	return left, nil
+	result := left
+	for _, opterm := range e.Rest {
+		right, err := c.compileTerm(opterm.Term)
+		if err != nil {
+			return "", err
+		}
+
+		if opterm.Op == "+" {
+			// si es string asumimos value_concat
+			result = fmt.Sprintf("value_concat(%s, %s)", result, right)
+		} else {
+			// solo ints/floats como antes
+			result = fmt.Sprintf(
+				"({ Value tmp; tmp.type=VAL_INT; tmp.i=%s.i %s %s.i; tmp; })",
+				result, opterm.Op, right,
+			)
+		}
+	}
+	return result, nil
 }
 
 // compileTerm transforma un término básico a C
@@ -102,7 +117,7 @@ func (c *Compiler) compileTerm(t *ast.Term) (string, error) {
 		return fmt.Sprintf("(Value){ .type=VAL_FLOAT, .f=%f }", *t.Float), nil
 
 	case t.String != nil:
-		return fmt.Sprintf("(Value){ .type=VAL_STRING, .s=\"%s\" }", *t.String), nil
+		return fmt.Sprintf("(Value){ .type=VAL_STRING, .s=\"%s\" }", escapeC(*t.String)), nil
 
 	case t.Ident != nil:
 		return *t.Ident, nil
@@ -124,4 +139,11 @@ func (c *Compiler) compileTerm(t *ast.Term) (string, error) {
 		}
 		return "", fmt.Errorf("tipo de término no soportado aún en el compilador")
 	}
+}
+
+func escapeC(s string) string {
+	s = strings.ReplaceAll(s, "\\", "\\\\")
+	s = strings.ReplaceAll(s, "\"", "\\\"")
+	s = strings.ReplaceAll(s, "\n", "\\n")
+	return s
 }
